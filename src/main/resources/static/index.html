@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+<form>
+    <h1>ENTER THE DETAILS DETAILS</h1>
+    NAME : <input type="text" id="name" name="name">
+    ADDRESS1: <input type="text" id="add1" name="add1">
+    ADDRESS2:<input type="text" id="add2" name="add2">
+    CITY:<input type="text" id="city" name="city">
+    ZIP CODE:<input type="number" id="zip" name="zip">
+    <button type="button" onclick="insert()">ADD EMPLOYEE</button>
+</form>
+    <table border="1px">
+        <thead >
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Role</th>
+            <th>c</th>
+            <th>Action</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody id="tby"></tbody>
+    </table>
+
+
+<script>
+
+    $(document).ready(function () {
+        showdata();
+    });
+
+    function insert(){
+
+        var name=$('#name').val();
+        var add1=$('#add1').val();
+        var add2=$('#add2').val();
+        var city=$('#city').val();
+        var zip=$('#zip').val();
+
+
+        var employeedetails={
+            employeeName:name,
+            addessLine1:add1,
+            addressLine2:add2,
+            city:city,
+            zipCode:zip
+
+        };
+
+
+        $.ajax({
+            url:'http://localhost:8080/s/insert',
+            type:'POST',
+            contentType:'application/json',
+            data:JSON.stringify(employeedetails),
+            success:function (){
+               alert("saved");
+               showdata();
+            }
+        });
+
+    }
+
+    function showdata() {
+        $.ajax({
+            url: 'http://localhost:8080/s/getallemp',
+            type: 'get',
+            success: function (employee) {
+                var tby = $('#tby');
+                tby.empty();
+
+                employee.forEach(function (u) {
+                    var row = '<tr>' +
+                        '<td>' + u.employeeNumber  + '</td>' +
+                        '<td>' + u.employeeName + '</td>' +
+                        '<td>' + u.addessLine1  + '</td>' +
+                        '<td>' + u.addressLine2 + '</td>' +
+                        '<td>' + u.city+ '</td>' +
+                        '<td>' + u.zipCode + '</td>' +
+                        '<td>' + '<button class="btn btn-warning" onclick="updateUser(' + u.employeeNumber+ ')">UPDATE</button>' + '</td>' +
+                        '<td>' + '<button class="btn btn-danger" onclick="deleteUser(' + u.employeeNumber + ')">DELETE</button>' + '</td>' +
+                        '</tr>';
+                    tby.append(row);
+                });
+            }
+        });
+    }
+
+    function deleteUser(id) {
+        $.ajax({
+            url: 'http://localhost:8080/s/delete/' + id,
+            type: 'DELETE',
+            success: function (response) {
+                showdata();
+            }
+        });
+    }
+
+    function updateUser(id) {
+        localStorage.setItem("id", id);
+        window.location.href = 'update.html';
+    }
+
+
+</script>
+</body>
+</html>

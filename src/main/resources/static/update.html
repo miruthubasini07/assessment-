@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>ENTER THE DETAILS DETAILS</h1>
+Id : <input type="text" id="id" name="name">
+NAME : <input type="text" id="name" name="name">
+ADDRESS1: <input type="text" id="add1" name="add1">
+ADDRESS2:<input type="text" id="add2" name="add2">
+CITY:<input type="text" id="city" name="city">
+ZIP CODE:<input type="number" id="zip" name="zip">
+<button type="button" onclick="Update1()">save</button>
+</body>
+<script>
+    $(document).ready(function () {
+        var id = localStorage.getItem("id");
+        $.get("http://localhost:8080/s/getemployee/" + id, function (user) {
+            $('#id').val(user.employeeNumber);
+            $('#name').val(user.employeeName);
+            $('#add1').val(user.addessLine1);
+            $('#add2').val(user.addressLine2);
+            $('#city').val(user.city);
+            $('#zip').val(user.zipCode);
+
+        });
+    });
+
+    function Update1() {
+        var name=$('#name').val();
+        var add1=$('#add1').val();
+        var add2=$('#add2').val();
+        var city=$('#city').val();
+        var zip=$('#zip').val();
+
+
+        var employeedetails={
+            employeeName:name,
+            addessLine1:add1,
+            addressLine2:add2,
+            city:city,
+            zipCode:zip
+
+        };
+
+        $.ajax({
+            url: 'http://localhost:8080/s/update',
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(employeedetails),
+            success: function () {
+                window.location.href = 'index.html';
+            }
+        });
+    }
+
+    function home() {
+        window.location.href = 'index.html';
+    }
+</script>
+</html>
